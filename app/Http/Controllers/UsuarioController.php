@@ -7,36 +7,42 @@ use App\Models\Usuario;
 
 class UsuarioController extends Controller
 {
-    // Mostrar todos los usuarios
+    /**
+     * Muestra todos los usuarios (opcional).
+     */
     public function index()
     {
-        return Usuario::all();
+        $usuarios = Usuario::all();
+        return response()->json($usuarios);
     }
 
-    // Crear nuevo usuario
+    /**
+     * Muestra el formulario de registro.
+     */
+    public function create()
+    {
+        return view('maquetacion_html.registro');
+    }
+
+    /**
+     * Guarda un nuevo usuario en la base de datos.
+     */
     public function store(Request $request)
     {
-        return Usuario::create($request->all());
-    }
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'identificacion' => 'required|string|max:20|unique:usuarios',
+            'correo' => 'required|email|unique:usuarios,email',
+            'contraseña' => 'required|string|min:6',
+        ]);
 
-    // Mostrar un usuario específico
-    public function show($id)
-    {
-        return Usuario::findOrFail($id);
-    }
+        $usuario = new Usuario();
+        $usuario->nombre = $request->nombre;
+        $usuario->identificacion = $request->identificacion;
+        $usuario->email = $request->correo;
+        $usuario->password = bcrypt($request->contraseña);
+        $usuario->save();
 
-    // Actualizar un usuario
-    public function update(Request $request, $id)
-    {
-        $usuario = Usuario::findOrFail($id);
-        $usuario->update($request->all());
-        return $usuario;
-    }
-
-    // Eliminar un usuario
-    public function destroy($id)
-    {
-        Usuario::destroy($id);
-        return response()->json(['mensaje' => 'Usuario eliminado']);
+        return view('maquetacion_html.registro_exitoso');
     }
 }

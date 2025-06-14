@@ -1,14 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UsuarioController;
 
 Route::get('/', function () {
     return view('welcome');
 });
-<<<<<<< HEAD
-=======
 
-use App\Http\Controllers\UsuarioController;
+Route::get('/registro', function () {
+    return view('maquetacion_html.registro');
+});
 
 Route::resource('usuarios', UsuarioController::class);
->>>>>>> 5efc216 (Reconexión al repositorio y reenvío de archivos)
