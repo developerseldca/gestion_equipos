@@ -11,8 +11,8 @@
     </header>
 
     <main class="container">
-        @if ($usuario->grupo_id)
-            <p>Ya estás asociado al grupo: <strong>{{ $usuario->grupo->nombre ?? 'Sin nombre' }}</strong></p>
+        @if ($grupo)
+            <p>Ya estás asociado al grupo: <strong>{{ $grupo->nombre_grupo }}</strong></p>
             <ul>
                 <li><a href="#">Gestionar grupo de entrenamiento</a></li>
                 <li><a href="#">Gestionar entrenamientos</a></li>
