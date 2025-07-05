@@ -14,7 +14,7 @@
         @if ($grupo)
             <p>Ya estás asociado al grupo: <strong>{{ $grupo->nombre_grupo }}</strong></p>
             <ul>
-                <li><a href="#">Gestionar grupo de entrenamiento</a></li>
+                <li><a href="{{ route('grupos.gestionar') }}">Gestionar grupo de entrenamiento</a></li>
                 <li><a href="#">Gestionar entrenamientos</a></li>
                 <li><a href="#">Ver reportes de progreso</a></li>
             </ul>

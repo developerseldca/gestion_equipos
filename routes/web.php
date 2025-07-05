@@ -32,6 +32,22 @@ Route::middleware('auth')->group(function () {
 
     // Crear grupo de entrenamiento
     Route::post('/grupos', [UsuarioController::class, 'storeGrupo'])->name('grupos.store');
+
+    // Gestionar grupo de entrenamiento
+    Route::get('/grupo/gestionar', [UsuarioController::class, 'detallesGrupo'])->name('grupos.gestionar');
+
+    // Actualizar grupo (usando el grupo del entrenador autenticado)
+    Route::put('/grupo/actualizar', [UsuarioController::class, 'actualizarGrupo'])->name('grupos.update');
+
+    // Eliminar grupo (del entrenador autenticado)
+    Route::delete('/grupo/eliminar', [UsuarioController::class, 'eliminarGrupo'])->name('grupos.destroy');
+
+    // Eliminar deportista del grupo
+    Route::delete('/usuarios/{id}', [UsuarioController::class, 'eliminarDeportista'])->name('usuarios.destroy');
+
+    // Ruta para que el entrenador agregue nuevos deportistas a su grupo (requiere autenticación)
+    Route::post('/grupo/agregar-integrantes', [UsuarioController::class, 'agregarIntegrantes'])->name('grupos.agregarIntegrantes');
+
 });
 
 /* ------------- CERRAR SESIÓN ------------- */

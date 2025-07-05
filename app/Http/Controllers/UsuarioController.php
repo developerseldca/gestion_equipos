@@ -9,20 +9,18 @@ use Illuminate\Support\Facades\Auth;
 
 class UsuarioController extends Controller
 {
-    // Método para mostrar el panel del entrenador
+    // Mostrar panel del entrenador
     public function rolEntrenador()
     {
         $usuario = Auth::user();
         $usuario->load('gruposComoEntrenador');
 
-        // Obtenemos el primer grupo que tenga como entrenador
         $grupo = $usuario->gruposComoEntrenador->first();
 
         return view('maquetacion_html.rol_entrenador', compact('usuario', 'grupo'));
     }
 
-
-    // Método para crear grupo
+    // Crear grupo
     public function storeGrupo(Request $request)
     {
         $request->validate([
@@ -38,11 +36,84 @@ class UsuarioController extends Controller
         $grupo->entrenador_id = $usuario->id;
         $grupo->save();
 
-        // Asociar el grupo al usuario
-        $usuario->save();
-
         return view('maquetacion_html.grupo_creado');
     }
 
-    // Otros métodos como create, store (registro), etc.
+    // Mostrar detalles del grupo
+    public function detallesGrupo()
+    {
+        $usuario = auth()->user();
+        $grupo = $usuario->gruposComoEntrenador()->withCount('usuarios')->first();
+
+        if (!$grupo) {
+            return redirect()->route('rol.entrenador')->with('error', 'No tienes un grupo asociado.');
+        }
+
+        // Obtener todos los usuarios que NO estén en el grupo y NO sean entrenadores
+        $usuariosDisponibles = Usuario::where('id', '!=', $usuario->id)
+            ->whereDoesntHave('gruposComoDeportista', function ($query) use ($grupo) {
+                $query->where('grupo_id', $grupo->id);
+            })->get();
+
+        return view('maquetacion_html.gestionar_grupo', compact('usuario', 'grupo', 'usuariosDisponibles'));
+    }
+
+
+    // Actualizar grupo
+    public function actualizarGrupo(Request $request)
+    {
+        $usuario = auth()->user();
+        $grupo = $usuario->gruposComoEntrenador()->first();
+
+        if (!$grupo) {
+            return redirect()->route('rol.entrenador')->with('error', 'No se encontró el grupo para actualizar.');
+        }
+
+        $grupo->nombre_grupo = $request->nombre_grupo;
+        $grupo->descripcion = $request->descripcion;
+        $grupo->save();
+
+        return redirect()->route('grupos.gestionar')->with('success', 'Grupo actualizado correctamente.');
+    }
+
+    // Eliminar grupo
+    public function eliminarGrupo()
+    {
+        $usuario = auth()->user();
+        $grupo = $usuario->gruposComoEntrenador()->first();
+
+        if (!$grupo) {
+            return redirect()->route('rol.entrenador')->with('error', 'No se encontró el grupo para eliminar.');
+        }
+
+        $grupo->delete();
+
+        return redirect()->route('rol.entrenador')->with('success', 'Grupo eliminado correctamente.');
+    }
+
+    // Eliminar deportista
+    public function eliminarDeportista($id)
+    {
+        $usuario = Usuario::findOrFail($id);
+        $usuario->gruposComoDeportista()->detach();
+
+        return back()->with('success', 'Deportista eliminado del grupo.');
+    }
+
+    // Agrega usuarios seleccionados como integrantes al grupo del entrenador autenticado
+    public function agregarIntegrantes(Request $request)
+    {
+        $usuario = Auth::user();
+        $grupo = $usuario->gruposComoEntrenador()->first();
+
+        if (!$grupo) {
+            return back()->with('error', 'No tienes grupo asociado.');
+        }
+
+        // Adjuntar los usuarios seleccionados
+        $grupo->usuarios()->attach($request->input('usuarios', []));
+
+        return redirect()->route('grupos.gestionar')->with('success', 'Integrantes agregados correctamente.');
+    }
+
 }

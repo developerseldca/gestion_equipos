@@ -21,4 +21,5 @@ body {
     cursor: pointer;
     width: 200px;
     font-size: 16px;
+    white-space: nowrap; /* ❗ evita que el texto se divida en 2 líneas */
 }
