@@ -4,15 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Equipos Deportivos</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{{ asset('styles.css') }}">
+    <style>
+        body {
+            background: url("{{ asset('images/deporte-fondo.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 0;
+        }
+
+        main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            color: #fff;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .content-box h1 {
+            font-size: 2.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            background-color: rgba(0, 123, 255, 0.9);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: rgba(0, 123, 255, 1);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 600px) {
+            .content-box h1 {
+                font-size: 1.8rem;
+            }
+
+            .btn {
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header class="header">
-        <h1>Bienvenidos</h1>
-    </header>
+    <div class="overlay"></div>
     <main>
-        <button class="btn" id="iniciarSesion">Iniciar Sesión</button>
-        <button class="btn" id="registrarse">Registrarse</button>
+        <div class="content-box">
+            <h1>Bienvenidos</h1>
+            <a href="{{ route('login') }}"><button class="btn">Iniciar Sesión</button></a>
+            <a href="{{ route('registro') }}"><button class="btn">Registrarse</button></a>
+        </div>
     </main>
 </body>
 </html>

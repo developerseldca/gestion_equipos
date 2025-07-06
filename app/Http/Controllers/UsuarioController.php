@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Auth;
 
 class UsuarioController extends Controller
 {
+    // Mostrar formulario de registro
+    public function create()
+    {
+        return view('maquetacion_html.registro'); // Asegúrate de tener esta vista
+    }
+
     // Mostrar panel del entrenador
     public function rolEntrenador()
     {
@@ -49,7 +55,7 @@ class UsuarioController extends Controller
             return redirect()->route('rol.entrenador')->with('error', 'No tienes un grupo asociado.');
         }
 
-        // Obtener todos los usuarios que NO estén en el grupo y NO sean entrenadores
+        // Obtener usuarios disponibles (que no estén en el grupo y no sean el entrenador)
         $usuariosDisponibles = Usuario::where('id', '!=', $usuario->id)
             ->whereDoesntHave('gruposComoDeportista', function ($query) use ($grupo) {
                 $query->where('grupo_id', $grupo->id);
@@ -57,7 +63,6 @@ class UsuarioController extends Controller
 
         return view('maquetacion_html.gestionar_grupo', compact('usuario', 'grupo', 'usuariosDisponibles'));
     }
-
 
     // Actualizar grupo
     public function actualizarGrupo(Request $request)
@@ -91,7 +96,7 @@ class UsuarioController extends Controller
         return redirect()->route('rol.entrenador')->with('success', 'Grupo eliminado correctamente.');
     }
 
-    // Eliminar deportista
+    // Eliminar deportista del grupo
     public function eliminarDeportista($id)
     {
         $usuario = Usuario::findOrFail($id);
@@ -100,7 +105,7 @@ class UsuarioController extends Controller
         return back()->with('success', 'Deportista eliminado del grupo.');
     }
 
-    // Agrega usuarios seleccionados como integrantes al grupo del entrenador autenticado
+    // Agregar nuevos integrantes al grupo
     public function agregarIntegrantes(Request $request)
     {
         $usuario = Auth::user();
@@ -110,10 +115,8 @@ class UsuarioController extends Controller
             return back()->with('error', 'No tienes grupo asociado.');
         }
 
-        // Adjuntar los usuarios seleccionados
         $grupo->usuarios()->attach($request->input('usuarios', []));
 
         return redirect()->route('grupos.gestionar')->with('success', 'Integrantes agregados correctamente.');
     }
-
 }
