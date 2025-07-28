@@ -619,6 +619,11 @@
         <h1>Bienvenido, Entrenador {{ $usuario->nombre }}</h1>
         <p class="header-subtitle">Panel de control para gestión deportiva</p>
     </header>
+    
+    <a href="{{ route('api.grupos') }}" target="_blank" class="btn btn-secondary">
+        📡 Ver grupos en formato JSON (API REST)
+    </a>
+
 
     <main class="container">
         @if ($grupo)

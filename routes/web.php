@@ -48,6 +48,10 @@ Route::middleware('auth')->group(function () {
     // Ruta para que el entrenador agregue nuevos deportistas a su grupo (requiere autenticación)
     Route::post('/grupo/agregar-integrantes', [UsuarioController::class, 'agregarIntegrantes'])->name('grupos.agregarIntegrantes');
 
+    // 📡 Ruta tipo API: Retorna un listado JSON de grupos con sus integrantes (nombre del grupo y nombres de usuarios)
+    Route::get('/api/grupos', [UsuarioController::class, 'apiGrupos'])->name('api.grupos');
+
+
 });
 
 /* ------------- CERRAR SESIÓN ------------- */

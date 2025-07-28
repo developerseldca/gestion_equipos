@@ -39,7 +39,7 @@ class UsuarioController extends Controller
     // Redirigir vista
    return redirect()->route('registro')->with('registro_exitoso', true);
     }
-    
+
     // Mostrar panel del entrenador
     public function rolEntrenador()
     {
@@ -144,4 +144,32 @@ class UsuarioController extends Controller
 
         return redirect()->route('grupos.gestionar')->with('success', 'Integrantes agregados correctamente.');
     }
+
+    /**
+     * 📡 Endpoint API REST: Retorna el nombre del grupo del entrenador autenticado
+     * y una lista con los nombres de los usuarios integrantes del grupo.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function apiGrupos()
+    {
+        $usuario = auth()->user();
+
+        // Supongamos que un entrenador solo tiene un grupo
+        $grupo = $usuario->gruposComoEntrenador()->with('usuarios')->first();
+
+        if (!$grupo) {
+            return response()->json([
+                'mensaje' => 'Este usuario no tiene grupos asignados.'
+            ], 404);
+        }
+
+        return response()->json([
+            'grupo' => $grupo->nombre_grupo,
+            'integrantes' => $grupo->usuarios->pluck('nombre')
+        ]);
+    }
+
+
 }
