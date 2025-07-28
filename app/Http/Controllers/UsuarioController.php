@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+
 use Illuminate\Http\Request;
 use App\Models\Usuario;
 use App\Models\Grupo;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class UsuarioController extends Controller
 {
@@ -15,6 +18,28 @@ class UsuarioController extends Controller
         return view('maquetacion_html.registro'); // Asegúrate de tener esta vista
     }
 
+    public function store(Request $request)
+    {
+    // Validar los datos del formulario
+    $request->validate([
+        'nombre' => 'required|string|max:50',
+        'identificacion' => 'required|string|min:6|max:20',
+        'email' => 'required|email|unique:usuarios,email',
+        'password' => 'required|min:8',
+    ]);
+
+    // Crear un nuevo usuario
+    $usuario = new Usuario();
+    $usuario->nombre = $request->nombre;
+    $usuario->identificacion = $request->identificacion;
+    $usuario->email = $request->email;
+    $usuario->password = Hash::make($request->password);
+    $usuario->save();
+
+    // Redirigir vista
+   return redirect()->route('registro')->with('registro_exitoso', true);
+    }
+    
     // Mostrar panel del entrenador
     public function rolEntrenador()
     {
@@ -78,7 +103,7 @@ class UsuarioController extends Controller
         $grupo->descripcion = $request->descripcion;
         $grupo->save();
 
-        return redirect()->route('grupos.gestionar')->with('success', 'Grupo actualizado correctamente.');
+        return redirect()->route('rol.entrenador')->with('success', 'Grupo actualizado correctamente.');
     }
 
     // Eliminar grupo

@@ -186,22 +186,34 @@
 
     <main class="container">
         <div class="form-wrapper">
-            <form method="POST" action="#" class="form">
+            <form method="POST" action="{{ route('login.process') }}" class="form">
                 @csrf
                 
-                <!-- Ejemplo de mensaje de error (se mostraría dinámicamente con Laravel) -->
-                <div class="error" style="display: none;">
-                    Credenciales incorrectas. Por favor, verifica tus datos.
-                </div>
+                <!-- Mostrar errores de validación -->
+                @if($errors->has('credenciales'))
+                    <div class="error" style="display: block; background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+                        {{ $errors->first('credenciales') }}
+                    </div>
+                @endif
+
+                @if($errors->any())
+                    <div class="error" style="display: block; background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+                        <ul style="margin: 0; padding-left: 20px;">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
                 <div class="form-group">
-                    <label for="correo">Correo electrónico:</label>
-                    <input type="email" id="correo" name="correo" required>
-                </div>
+                    <label for="email">Correo electrónico:</label>
+                    <input type="email" id="email" name="email" value="{{ old('email') }}" required>
+                 </div>
 
-                <div class="form-group">
-                    <label for="contraseña">Contraseña:</label>
-                    <input type="password" id="contraseña" name="contraseña" required>
+                 <div class="form-group">
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password" required>
                 </div>
 
                 <button type="submit" class="btn">Ingresar</button>
@@ -209,9 +221,26 @@
 
             <div class="register-link">
                 ¿No tienes cuenta?
-                <a href="#registro">Regístrate aquí</a>
+                <a href="{{ route('registro') }}">Regístrate aquí</a>
             </div>
         </div>
     </main>
+
+    <script>
+        // Script para mostrar mensaje de éxito si viene del registro
+        @if(session('success'))
+            // Usar SweetAlert2 si lo tienes cargado, si no, un alert simple
+            @if(isset($useSweetAlert))
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: '{{ session('success') }}',
+                    icon: 'success',
+                    timer: 3000
+                });
+            @else
+                alert('{{ session('success') }}');
+            @endif
+        @endif
+    </script>
 </body>
 </html>

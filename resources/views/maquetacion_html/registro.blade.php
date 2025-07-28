@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro - Gestión de Equipos Deportivos</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         * {
             margin: 0;
@@ -263,7 +264,7 @@
         <div class="form-wrapper">
             <h2 class="form-title">Crear Cuenta</h2>
             
-            <form action="#" method="POST" id="registroForm">
+            <form action="{{ route('usuarios.store') }}" method="POST" id="registroForm">
                 @csrf
 
                 <div class="form-group">
@@ -285,20 +286,20 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="correo">
+                    <label for="email">
                         <span>📧</span>
                         Correo electrónico:
                     </label>
-                    <input type="email" id="correo" name="correo" required>
+                    <input type="email" id="email" name="email" required>
                     <div class="error-message">Por favor, ingresa un correo válido</div>
                 </div>
 
                 <div class="form-group">
-                    <label for="contraseña">
+                    <label for="password">
                         <span>🔒</span>
                         Contraseña:
                     </label>
-                    <input type="password" id="contraseña" name="contraseña" required minlength="8">
+                    <input type="password" id="password" name="password" required minlength="8">
                     <div class="password-strength">
                         <div class="password-strength-bar" id="strengthBar"></div>
                     </div>
@@ -310,60 +311,72 @@
 
             <div class="login-link">
                 ¿Ya tienes cuenta?
-                <a href="#login">Inicia sesión aquí</a>
+                <a href="{{ route('login') }}">Inicia sesión aquí</a>
             </div>
         </div>
     </main>
 
-    <script>
-        // Validación en tiempo real
-        document.getElementById('registroForm').addEventListener('input', function(e) {
-            const field = e.target;
-            const formGroup = field.closest('.form-group');
-            const errorMsg = formGroup.querySelector('.error-message');
-            
-            // Remover clases anteriores
-            formGroup.classList.remove('error', 'success');
-            errorMsg.style.display = 'none';
-            
-            // Validar campo
-            if (field.checkValidity()) {
-                formGroup.classList.add('success');
-            } else {
-                formGroup.classList.add('error');
-                errorMsg.style.display = 'block';
-            }
-        });
+ <script>
+    // 🔁 Validación en tiempo real de los campos del formulario
+    document.getElementById('registroForm').addEventListener('input', function(e) {
+        const field = e.target;
+        const formGroup = field.closest('.form-group');
+        const errorMsg = formGroup.querySelector('.error-message');
 
-        // Indicador de fuerza de contraseña
-        document.getElementById('contraseña').addEventListener('input', function(e) {
-            const password = e.target.value;
-            const strengthBar = document.getElementById('strengthBar');
-            
-            let strength = 0;
-            if (password.length >= 8) strength++;
-            if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
-            if (password.match(/[0-9]/)) strength++;
-            if (password.match(/[^a-zA-Z0-9]/)) strength++;
-            
-            strengthBar.className = 'password-strength-bar';
-            
-            if (strength === 1) {
-                strengthBar.classList.add('strength-weak');
-            } else if (strength === 2 || strength === 3) {
-                strengthBar.classList.add('strength-medium');
-            } else if (strength === 4) {
-                strengthBar.classList.add('strength-strong');
-            }
-        });
+        // 🧼 Limpiar clases previas
+        formGroup.classList.remove('error', 'success');
+        errorMsg.style.display = 'none';
 
-        // Validación al enviar
-        document.getElementById('registroForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Aquí normalmente enviarías los datos al servidor
-            alert('¡Registro completado! (En desarrollo)');
-        });
-    </script>
+        // ✅ Si el campo es válido, aplicar clase 'success', si no, 'error'
+        if (field.checkValidity()) {
+            formGroup.classList.add('success');
+        } else {
+            formGroup.classList.add('error');
+            errorMsg.style.display = 'block';
+        }
+    });
+
+    // 💪 Indicador visual de la fuerza de la contraseña
+    document.getElementById('password').addEventListener('input', function(e) {
+        const password = e.target.value;
+        const strengthBar = document.getElementById('strengthBar');
+
+        let strength = 0;
+        if (password.length >= 8) strength++; // mínimo de caracteres
+        if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++; // letras mayúsculas y minúsculas
+        if (password.match(/[0-9]/)) strength++; // números
+        if (password.match(/[^a-zA-Z0-9]/)) strength++; // caracteres especiales
+
+        // 🧼 Limpiar clases anteriores
+        strengthBar.className = 'password-strength-bar';
+
+        // 🟠 Debil
+        if (strength === 1) {
+            strengthBar.classList.add('strength-weak');
+        }
+        // 🟡 Media
+        else if (strength === 2 || strength === 3) {
+            strengthBar.classList.add('strength-medium');
+        }
+        // 🟢 Fuerte
+        else if (strength === 4) {
+            strengthBar.classList.add('strength-strong');
+        }
+    });
+    // Script para mostrar alerta de éxito
+@if(session('registro_exitoso'))
+    Swal.fire({
+        title: '¡Registro Exitoso!',
+        text: 'Tu cuenta ha sido creada correctamente. Serás redirigido al login.',
+        icon: 'success',
+        timer: 3000,
+        timerProgressBar: true,
+        showConfirmButton: false,
+        allowOutsideClick: false
+    }).then(() => {
+        window.location.href = "{{ route('login') }}";
+    });
+@endif
+</script>
 </body>
 </html>

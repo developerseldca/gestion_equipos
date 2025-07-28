@@ -17,24 +17,22 @@ class AuthController extends Controller
 
     // Procesar el inicio de sesión
     public function processLogin(Request $request)
-    {
-        $request->validate([
-            'correo' => 'required|email',
-            'contraseña' => 'required|string',
-        ]);
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required|string',
+    ]);
 
-        // Buscar usuario por email
-        $usuario = Usuario::where('email', $request->correo)->first();
+    // Buscar usuario por email
+    $usuario = Usuario::where('email', $request->email)->first();
 
-        if ($usuario && Hash::check($request->contraseña, $usuario->password)) {
-            // Inicia sesión
-            Auth::login($usuario);
-
-            // Redirige correctamente usando la sesión activa
-            return redirect()->route('dashboard');
-        } else {
-            // Credenciales incorrectas
-            return back()->withErrors(['credenciales' => 'Correo o contraseña incorrectos.'])->withInput();
-        }
+    if ($usuario && Hash::check($request->password, $usuario->password)) {
+        // Inicia sesión
+        Auth::login($usuario);
+        return redirect()->route('dashboard');
+    } else {
+        // Credenciales incorrectas
+        return back()->withErrors(['credenciales' => 'Correo o contraseña incorrectos.'])->withInput();
     }
+}
 }

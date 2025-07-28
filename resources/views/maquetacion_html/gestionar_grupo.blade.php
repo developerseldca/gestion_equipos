@@ -634,6 +634,10 @@
                 </div>
             </div>
         </div>
+            <div class="navigation-links">
+        <a href="{{ route('rol.entrenador') }}" class="back-link">← Volver al panel de entrenador</a>
+        <a href="{{ route('inicio') }}" class="back-link">Volver a la página principal</a>
+    </div>
     </div>
 
     {{-- Modal mejorado --}}
@@ -665,6 +669,8 @@
             </form>
         </div>
     </div>
+
+
 
     {{-- Scripts --}}
     <script>

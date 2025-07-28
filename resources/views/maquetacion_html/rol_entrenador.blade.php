@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Entrenador - Gestión de Equipos Deportivos</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         * {
             margin: 0;
@@ -621,6 +622,12 @@
 
     <main class="container">
         @if ($grupo)
+            @if (session('success'))
+                <div class="alert-success" style="background: #d4edda; color: #155724; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #c3e6cb;">
+                    {{ session('success') }}
+                </div>
+            @endif
+        
             <!-- Usuario CON grupo -->
             <div class="status-card">
                 <div class="status-icon">🏆</div>
@@ -649,7 +656,7 @@
                 </div>
 
                 <!-- Formulario de edición (oculto por defecto) -->
-                <form action="{{ route('grupos.update', $grupo->id) }}" method="POST" class="edit-form" id="editForm" style="display: none;">
+                <form action="{{ route('grupos.update') }}" method="POST" class="edit-form" id="editForm" style="display: none;">
                     @csrf
                     @method('PUT')
                     
@@ -749,7 +756,7 @@
             </div>
 
             @if (session('success'))
-                <div class="alert-success">
+                <div class="alert-success" style="background: #d4edda; color: #155724; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #c3e6cb;">
                     {{ session('success') }}
                 </div>
             @endif
@@ -799,6 +806,24 @@
                 form.style.display = 'none';
             }
         }
+
+        // Mostrar mensaje de éxito con SweetAlert2
+        @if (session('success'))
+            // Si tienes SweetAlert2 cargado
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: '¡Éxito!',
+                    text: '{{ session('success') }}',
+                    icon: 'success',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+            } else {
+                // Fallback si no tienes SweetAlert2
+                alert('{{ session('success') }}');
+            }
+        @endif
 
         // Efecto de partículas en el fondo
         document.addEventListener('DOMContentLoaded', function() {
